@@ -1,0 +1,4 @@
+[core]
+    remote = origin
+['remote "origin"']
+    url = https://dagshub.com/tayyabrahmani/Amex-Analyze-This.dvc
