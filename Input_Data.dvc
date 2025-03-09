@@ -1,0 +1,5 @@
+outs:
+    - md5: 23ad16b5f8a879c95158967a8d35a9ea.dir
+      size: 17359699
+      path: Input_Data
+      nfiles: 2
