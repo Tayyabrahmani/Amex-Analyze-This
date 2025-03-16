@@ -1,0 +1,36 @@
+stages:
+  preprocess:
+    cmd: python src/preprocessing.py
+    deps:
+      - Input_Data/Training_dataset_Original.csv
+      - src/preprocessing.py
+    outs:
+      - Input_Data/processed_data.csv
+
+  train:
+    cmd: python models/train_models.py
+    deps:
+      - Input_Data/processed_data.csv
+      - models/train_models.py
+      - models/model_factory.py
+      - config.yaml  # Track changes to model version
+    outs:
+      - models/trained_models/random_forest_v1.pkl
+      - models/trained_models/xgboost_v1.pkl
+
+  evaluate:
+    cmd: python models/evaluate_models.py
+    deps:
+      - models/trained_models/random_forest_v1.pkl
+      - models/trained_models/xgboost_v1.pkl
+      - models/evaluate_models.py
+      - models/scoring.py
+      - config.yaml
+
+  mlflow:
+    cmd: python mlflow_tracking/mlflow_runner.py
+    deps:
+      - models/trained_models/random_forest_v1.pkl
+      - models/trained_models/xgboost_v1.pkl
+      - mlflow_tracking/mlflow_runner.py
+      - config.yaml
