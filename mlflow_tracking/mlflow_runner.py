@@ -16,8 +16,8 @@ def run_mlflow_experiment():
     train_models()
 
     # Evaluate models
-    evaluate_model("random_forest")
-    evaluate_model("xgboost")
+    evaluate_model("random_forest_model")
+    evaluate_model("xgboost_model")
 
     print("Experiments tracked successfully in MLFlow!")
 

@@ -21,7 +21,7 @@ with open("config.yaml", "r") as f:
 MODEL_VERSION = config["model_version"]
 
 setup_mlflow()
-
+mlflow.sklearn.autolog()
 
 def train_models():
     """Train models and save them."""
@@ -36,19 +36,17 @@ def train_models():
     rf_model = create_random_forest()
     xgb_model = create_xgboost()
 
-    # Train models
-    rf_model.fit(X_train, y_train)
-    xgb_model.fit(X_train, y_train)
+    # Train and log models with MLflow
+    for model, model_name in [(rf_model, "random_forest_model"), (xgb_model, "xgboost_model")]:
+        with mlflow.start_run() as run:
+            mlflow.set_tag("mlflow.runName", model_name)
 
-    # 🔥 Register Models in MLflow (NO Local Saving)
-    with mlflow.start_run():
-        # Log and register Random Forest
-        rf_model_uri = mlflow.sklearn.log_model(rf_model, "random_forest_model")
-        mlflow.register_model(rf_model_uri.model_uri, "random_forest_model")
+            # Train model
+            model.fit(X_train, y_train)
 
-        # Log and register XGBoost
-        xgb_model_uri = mlflow.sklearn.log_model(xgb_model, "xgboost_model")
-        mlflow.register_model(xgb_model_uri.model_uri, "xgboost_model")
+            # Log and register model
+            model_uri = mlflow.sklearn.log_model(model, model_name)
+            mlflow.register_model(model_uri.model_uri, model_name)
 
     print(f"Models trained and registered in MLflow as version: {MODEL_VERSION}")
 
